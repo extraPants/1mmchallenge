@@ -1,17 +1,12 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { googleAuth } from '$lib/auth-google';
+import { createGoogleAuth } from '$lib/auth-google';
 import { generateState, generateCodeVerifier } from 'arctic';
-import { dev } from '$app/environment';
 
 export const GET: RequestHandler = async (event) => {
 	const state = generateState();
 	const codeVerifier = generateCodeVerifier();
-	
-	// Verify credentials are set (they should be loaded via googleAuth initialization)
-	// If they're not set, googleAuth will fail, so we'll catch that error
-	
-	// Verify credentials are available (they'll be checked in getGoogleAuth)
+	const googleAuth = createGoogleAuth(event.url);
 	
 	const scopes = ['openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'];
 	
@@ -39,4 +34,3 @@ export const GET: RequestHandler = async (event) => {
 
 	throw redirect(302, url.toString());
 };
-
