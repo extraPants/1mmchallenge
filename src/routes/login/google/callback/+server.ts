@@ -1,6 +1,6 @@
 import { redirect, isRedirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { googleAuth } from '$lib/auth-google';
+import { createGoogleAuth } from '$lib/auth-google';
 import { lucia } from '$lib/lucia';
 import db from '$lib/db';
 import { generateId } from 'lucia';
@@ -16,6 +16,7 @@ export const GET: RequestHandler = async (event) => {
 	}
 
 	try {
+		const googleAuth = createGoogleAuth(event.url);
 		const tokens = await googleAuth.validateAuthorizationCode(code, storedCodeVerifier);
 		
 		// Get user info from Google
@@ -111,4 +112,3 @@ export const GET: RequestHandler = async (event) => {
 		throw redirect(302, '/login?error=server_error');
 	}
 };
-
